@@ -23,7 +23,6 @@
   </div>
 </header>
 
-<!-- Hero for contact page -->
 <section class="hero" style="background-image:url('images/kitchen.jpg'); min-height:40vh;">
   <div class="hero-content"> 
     <h1>Contact Us</h1>
@@ -33,9 +32,11 @@
 
 <section class="container">
   <h2>Get in Touch</h2>
-  <p>Have questions about your upcoming tile project? Looking for a quote? Give us a call or fill out the form below and we’ll respond promptly. For Spanish‑speaking clients please call our alternate number below.</p>
+  <p>Have questions about your upcoming tile project? Looking for a quote? Give us a call or fill out the form below and we’ll respond promptly. For Spanish-speaking clients please call our alternate number below.</p>
+
+  <!-- Form: JS will send JSON to Formspree -->
   <div class="contact-form">
-    <form action="https://formspree.io/f/mrbrgwkl" method="POST">
+    <form id="contactForm">
       <label for="name">Name *</label>
       <input type="text" id="name" name="name" required>
 
@@ -66,7 +67,7 @@
   <div class="container footer-inner">
     <div>
       <h4>Contact Us</h4>
-      <p>Orlando's Tile Services<br>Auburn, WA<br>Phone (English): 714 718 9501<br>Phone (Español): 206 787 2266<br>Email: orlandostileservices@gmail.com</p>
+      <p>Orlando's Tile Services<br>Auburn, WA<br>Phone (English): <a href="tel:+17147189501">714-718-9501</a><br>Phone (Español): <a href="tel:+12067872266">206-787-2266</a><br>Email: <a href="mailto:orlandostileservices@gmail.com">orlandostileservices@gmail.com</a></p>
     </div>
     <div>
       <h4>Quick Links</h4>
@@ -83,6 +84,48 @@
     <p>&copy; 2025 Orlando's Tile Services. All rights reserved.</p>
   </div>
 </footer>
+
+<!-- JS: send JSON to Formspree endpoint that you provided -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.querySelector("#contactForm");
+  if (!form) return;
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const data = {
+      name: form.querySelector('[name="name"]').value || "",
+      email: form.querySelector('[name="email"]').value || "",
+      phone: form.querySelector('[name="phone"]').value || "",
+      service: form.querySelector('[name="service"]').value || "",
+      message: form.querySelector('[name="message"]').value || ""
+    };
+
+    try {
+      const res = await fetch("https://formspree.io/f/mrbrgwkl", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (res.ok) {
+        alert("Thanks — your request was sent. We’ll get back to you soon.");
+        form.reset();
+      } else {
+        const body = await res.text();
+        console.error("Formspree error:", res.status, body);
+        alert("There was a problem sending your request (server returned " + res.status + ").");
+      }
+    } catch (err) {
+      console.error("Network error:", err);
+      alert("Network error — could not send form.");
+    }
+  });
+});
+</script>
 
 </body>
 </html>
